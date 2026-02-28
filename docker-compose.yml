@@ -1,0 +1,33 @@
+version: '3.9'
+
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cleanarch-webapi
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=DotnetCleanArchitectureDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True;"
+      Jwt__Secret: "THIS_IS_A_DEMO_SECRET_CHANGE_IN_PRODUCTION_123456789"
+      Jwt__Issuer: "dotnet-clean-architecture-template"
+      Jwt__Audience: "dotnet-clean-architecture-template-client"
+      Jwt__ExpiryMinutes: "60"
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: cleanarch-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Your_password123"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+volumes:
+  sqlserver_data:
